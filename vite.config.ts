@@ -9,4 +9,7 @@ export default defineConfig({
     FullReload(['config/routes.rb', 'app/views/**/*'], { delay: 200 }),
     tailwindcss()
   ],
+  server: {
+    allowedHosts: ['vite']
+  }
 })
