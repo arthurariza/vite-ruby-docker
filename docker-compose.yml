@@ -4,7 +4,7 @@ x-app: &app
     dockerfile: ./Dockerfile.dev
     args:
       RUBY_VERSION: '3.4.1'
-      NODE_MAJOR: '22'
+      NODE_MAJOR: '20'
   environment: &env
     NODE_ENV: development
     RAILS_ENV: development
@@ -17,7 +17,7 @@ x-backend: &backend
   stdin_open: true
   tty: true
   volumes:
-    - ..:/app:cached
+    - .:/app
     - bundle:/usr/local/bundle
     - rails_cache:/app/tmp/cache
     - node_modules:/app/node_modules
@@ -59,18 +59,25 @@ services:
         bundle install;
       "
     volumes:
-      - ..:/app
+      - .:/app
       - bundle:/usr/local/bundle
 
   vite:
     <<: *backend
-    command: ./bin/vite dev
+    command: >
+      sh -c "
+        yarn install
+        ./bin/vite dev
+      "
+    depends_on:
+      bundler:
+        condition: service_completed_successfully
     environment:
       DEBUG: '*vite*'
       VITE_RUBY_HOST: 0.0.0.0
       YARN_CACHE_FOLDER: /app/node_modules/.yarn-cache
     volumes:
-      - ..:/app:cached
+      - .:/app
       - bundle:/usr/local/bundle
       - node_modules:/app/node_modules
       - vite_dev:/app/public/vite-dev
