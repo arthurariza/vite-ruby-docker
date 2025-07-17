@@ -1,0 +1,7 @@
+--database=sqlite3
+--skip-asset-pipeline
+--skip-javascript
+--skip-hotwire
+--skip-assets
+--skip-jbuilder
+--skip-test

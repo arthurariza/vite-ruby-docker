@@ -1,0 +1,56 @@
+# Omakase Ruby styling for Rails
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+
+plugins:
+  - rubocop-rspec
+  - rubocop-thread_safety
+  - rubocop-factory_bot
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: <%= File.read('.ruby-version').strip[/^\d+\.\d+/, 0] %>
+  Exclude:
+    - 'db/schema.rb'
+    - 'Gemfile'
+    - 'lib/tasks/*.rake'
+    - 'bin/*'
+    - 'node_modules/**/*'
+    - 'config/puma.rb'
+    - 'config/spring.rb'
+    - 'config/environments/development.rb'
+    - 'config/environments/production.rb'
+    - 'spec/spec_helper.rb'
+
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - db/**/*
+    - spec/**/*
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/MethodLength:
+  Max: 15
+
+Style/ClassAndModuleChildren:
+  Enabled: true
+  EnforcedStyle: compact
+  SafeAutoCorrect: true
+  Exclude:
+    - config/**/*
+
+Layout/IndentationConsistency:
+  Enabled: true
+  EnforcedStyle: normal
+
+Layout/IndentationWidth:
+  Enabled: true
+  Width: 2

@@ -1,0 +1,88 @@
+x-app: &app
+  build:
+    context: .
+    dockerfile: ./Dockerfile.dev
+    args:
+      RUBY_VERSION: '3.4.1'
+      NODE_MAJOR: '22'
+  environment: &env
+    NODE_ENV: development
+    RAILS_ENV: development
+  tmpfs:
+    - /tmp
+    - /app/tmp/pids
+
+x-backend: &backend
+  <<: *app
+  stdin_open: true
+  tty: true
+  volumes:
+    - ..:/app:cached
+    - bundle:/usr/local/bundle
+    - rails_cache:/app/tmp/cache
+    - node_modules:/app/node_modules
+    - history:/usr/local/hist
+    - vite_dev:/app/public/vite-dev
+    - vite_test:/app/public/vite-test    
+  environment: &backend_environment
+    <<: *env
+    YARN_CACHE_FOLDER: /app/node_modules/.yarn-cache
+    HISTFILE: /usr/local/hist/.bash_history
+    IRB_HISTFILE: /usr/local/hist/.irb_history
+    EDITOR: vi
+    VITE_RUBY_HOST: vite
+    
+services:
+  rails:
+    <<: *backend
+    command: >
+      sh -c "
+        rm -f tmp/pids/server.pid
+        bin/rails server -b 0.0.0.0 -p 3000
+      "
+    depends_on:
+      bundler:
+        condition: service_completed_successfully
+      vite:
+        condition: service_started
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+
+  bundler:
+    <<: *backend
+    command: >
+      bash -c "
+        echo 'Running bundler...';
+        bundle --version;
+        bundle install;
+      "
+    volumes:
+      - ..:/app
+      - bundle:/usr/local/bundle
+
+  vite:
+    <<: *backend
+    command: ./bin/vite dev
+    environment:
+      DEBUG: '*vite*'
+      VITE_RUBY_HOST: 0.0.0.0
+      YARN_CACHE_FOLDER: /app/node_modules/.yarn-cache
+    volumes:
+      - ..:/app:cached
+      - bundle:/usr/local/bundle
+      - node_modules:/app/node_modules
+      - vite_dev:/app/public/vite-dev
+      - vite_test:/app/public/vite-test
+    ports:
+      - "3036:3036"
+  
+volumes:
+  bundle:
+  node_modules:
+  history:
+  rails_cache:
+  vite_dev:
+  vite_test:
+  
