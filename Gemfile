@@ -38,3 +38,10 @@ group :development, :test do
   gem "faker"
   gem "rspec-rails"
 end
+
+group :development do
+  gem "htmlbeautifier"
+  gem "rubocop-rspec"
+  gem "rubocop-thread_safety"
+  gem "rubocop-factory_bot"
+end
