@@ -45,3 +45,7 @@ group :development do
   gem "rubocop-thread_safety"
   gem "rubocop-factory_bot"
 end
+
+group :test do
+  gem "shoulda-matchers"
+end
