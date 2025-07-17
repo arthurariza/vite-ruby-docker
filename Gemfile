@@ -29,3 +29,4 @@ end
 group :development do
   gem "web-console"
 end
+gem "vite_rails"
