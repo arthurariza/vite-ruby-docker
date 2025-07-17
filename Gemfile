@@ -49,3 +49,5 @@ end
 group :test do
   gem "shoulda-matchers"
 end
+
+gem "bcrypt", "~> 3.1"
